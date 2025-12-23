@@ -149,17 +149,17 @@ const AdminDashboard = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-lg border-2 border-medical-blue/20 p-6">
+          <div className="bg-white rounded-xl shadow-lg border-2 border-blue-100 p-6">
             <div className="flex items-center space-x-4">
-              <FaUserMd className="text-medical-blue text-3xl" />
+              <FaUserMd className="text-blue-600 text-3xl" />
               <div>
                 <h3 className="text-lg font-semibold text-gray-800">Total Doctors</h3>
-                <p className="text-2xl font-bold text-medical-blue">{doctors.length}</p>
+                <p className="text-2xl font-bold text-blue-600">{doctors.length}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg border-2 border-green-400/20 p-6">
+          <div className="bg-white rounded-xl shadow-lg border-2 border-green-100 p-6">
             <div className="flex items-center space-x-4">
               <FaUserCheck className="text-green-600 text-3xl" />
               <div>
@@ -171,7 +171,7 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg border-2 border-yellow-400/20 p-6">
+          <div className="bg-white rounded-xl shadow-lg border-2 border-yellow-100 p-6">
             <div className="flex items-center space-x-4">
               <FaKey className="text-yellow-600 text-3xl" />
               <div>
@@ -183,7 +183,7 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg border-2 border-purple-400/20 p-6">
+          <div className="bg-white rounded-xl shadow-lg border-2 border-purple-100 p-6">
             <div className="flex items-center space-x-4">
               <FaChartLine className="text-purple-600 text-3xl" />
               <div>
@@ -200,7 +200,7 @@ const AdminDashboard = () => {
         <div className="mb-6">
           <button
             onClick={() => setShowCreateForm(!showCreateForm)}
-            className="bg-gradient-medical text-white px-6 py-3 rounded-xl font-semibold shadow-medical-glow hover:shadow-medical-glow-strong transition-all duration-300 hover:scale-105 flex items-center space-x-2"
+            className="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-blue-700 transition-all duration-300 hover:scale-105 flex items-center space-x-2"
           >
             <FaPlus />
             <span>Create New Doctor Account</span>
@@ -209,7 +209,7 @@ const AdminDashboard = () => {
 
         {/* Create Doctor Form */}
         {showCreateForm && (
-          <div className="bg-white rounded-2xl shadow-xl border-2 border-medical-blue/20 p-8 mb-8">
+          <div className="bg-white rounded-2xl shadow-xl border-2 border-blue-100 p-8 mb-8">
             <h2 className="text-2xl font-semibold text-gray-800 mb-6">Create New Doctor Account</h2>
             <form onSubmit={handleCreateDoctor} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -219,7 +219,7 @@ const AdminDashboard = () => {
                     type="text"
                     value={newDoctor.name}
                     onChange={(e) => setNewDoctor({ ...newDoctor, name: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-medical-blue focus:outline-none"
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
                     placeholder="Dr. John Smith"
                     required
                   />
@@ -230,7 +230,7 @@ const AdminDashboard = () => {
                     type="email"
                     value={newDoctor.email}
                     onChange={(e) => setNewDoctor({ ...newDoctor, email: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-medical-blue focus:outline-none"
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
                     placeholder="doctor@hospital.com"
                     required
                   />
@@ -243,7 +243,7 @@ const AdminDashboard = () => {
                     type="text"
                     value={newDoctor.password}
                     onChange={(e) => setNewDoctor({ ...newDoctor, password: e.target.value })}
-                    className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-medical-blue focus:outline-none"
+                    className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
                     placeholder="Enter password (min 6 characters)"
                     required
                   />
@@ -259,7 +259,7 @@ const AdminDashboard = () => {
               <div className="flex space-x-4">
                 <button
                   type="submit"
-                  className="bg-medical-blue text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+                  className="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors shadow-md"
                 >
                   Create Account
                 </button>
@@ -276,7 +276,7 @@ const AdminDashboard = () => {
         )}
 
         {/* Doctors List */}
-        <div className="bg-white rounded-2xl shadow-xl border-2 border-medical-blue/20 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-xl border-2 border-blue-100 overflow-hidden">
           <div className="p-6 border-b border-gray-200">
             <h2 className="text-2xl font-semibold text-gray-800">Doctor Accounts</h2>
           </div>
