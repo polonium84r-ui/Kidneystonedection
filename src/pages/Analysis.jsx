@@ -23,6 +23,7 @@ const Analysis = () => {
     age: '',
     gender: ''
   })
+  const [ageError, setAgeError] = useState('')
   const navigate = useNavigate()
   const { user } = useAuth()
 
@@ -83,6 +84,13 @@ const Analysis = () => {
   }
 
   const generatePDF = async () => {
+    // Basic Age Validation
+    const ageNum = parseInt(patientDetails.age, 10)
+    if (!patientDetails.age || isNaN(ageNum) || ageNum <= 0 || ageNum > 120) {
+      setAgeError('Please enter a valid age (1-120)')
+      return
+    }
+
     setShowPatientModal(false)
     setIsGeneratingPDF(true)
     setPdfError(null)
@@ -107,6 +115,7 @@ const Analysis = () => {
         age: '',
         gender: ''
       })
+      setAgeError('')
     }
   }
 
@@ -337,6 +346,14 @@ const Analysis = () => {
             </p>
           </div>
         </div>
+
+        {/* Medical Disclaimer Footer - UI */}
+        <div className="mt-8 text-center border-t border-slate-200 pt-6">
+          <p className="text-xs text-slate-400 font-medium">
+            Measurements are AI-assisted estimates (±1–2 mm). Final clinical decisions must be made by a qualified physician.
+          </p>
+        </div>
+
       </div>
 
       {/* Patient Details Modal */}
@@ -375,10 +392,14 @@ const Analysis = () => {
                   <input
                     type="number"
                     value={patientDetails.age}
-                    onChange={(e) => setPatientDetails({ ...patientDetails, age: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-medical-primary/20 focus:border-medical-primary outline-none transition-all text-sm"
+                    onChange={(e) => {
+                      setPatientDetails({ ...patientDetails, age: e.target.value })
+                      if (ageError) setAgeError('')
+                    }}
+                    className={`w-full px-4 py-2.5 border ${ageError ? 'border-red-500 bg-red-50' : 'border-slate-300'} rounded-lg focus:ring-2 focus:ring-medical-primary/20 focus:border-medical-primary outline-none transition-all text-sm`}
                     placeholder="Years"
                   />
+                  {ageError && <p className="text-xs text-red-500 mt-1 font-medium">{ageError}</p>}
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Gender</label>

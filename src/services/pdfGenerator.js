@@ -369,8 +369,18 @@ export const generatePDFReport = async (analysisData, aiInsights = null, doctorS
     const totalPages = doc.internal.getNumberOfPages()
     for (let i = 1; i <= totalPages; i++) {
       doc.setPage(i)
+
+      // Medical Disclaimer in PDF Footer
       doc.setFontSize(8)
       doc.setTextColor(150, 150, 150)
+      doc.text(
+        'Measurements are AI-assisted estimates (±1–2 mm). Final clinical decisions must be made by a qualified physician.',
+        pageWidth / 2,
+        pageHeight - 15,
+        { align: 'center' }
+      )
+
+      // Page Number
       doc.text(
         `Page ${i} of ${totalPages} - Kidney Stone Detection System`,
         pageWidth / 2,
