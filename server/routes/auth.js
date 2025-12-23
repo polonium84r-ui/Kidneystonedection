@@ -54,7 +54,7 @@ router.post('/register', async (req, res) => {
         );
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error' });
     }
 });
 
@@ -95,7 +95,7 @@ router.post('/login', async (req, res) => {
         );
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error' });
     }
 });
 
@@ -112,7 +112,7 @@ router.get('/users', auth, async (req, res) => {
         res.json(users);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server error' });
     }
 });
 
@@ -134,7 +134,7 @@ router.put('/users/:id/status', auth, async (req, res) => {
         res.json({ msg: 'User status updated', user });
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server error' });
     }
 });
 
@@ -162,7 +162,7 @@ router.put('/users/:id/password', auth, async (req, res) => {
         res.json({ msg: 'Password reset successfully' });
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server error' });
     }
 });
 
@@ -187,7 +187,8 @@ router.post('/change-password', auth, async (req, res) => {
 
         res.json({ msg: 'Password updated successfully' });
     } catch (err) {
-        res.status(500).send('Server Error');
+        console.error(err.message);
+        res.status(500).json({ msg: 'Server error' });
     }
 });
 
