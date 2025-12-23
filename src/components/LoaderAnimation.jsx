@@ -1,14 +1,14 @@
-import { FaHeartbeat } from 'react-icons/fa'
+import { FaSpinner } from 'react-icons/fa'
 
 const LoaderAnimation = ({ message = 'Analyzing with AI...' }) => {
   return (
     <div className="flex flex-col items-center justify-center space-y-6 py-12">
-      {/* Pulsing Heartbeat Icon */}
+      {/* Pulsing Medical Icon */}
       <div className="relative">
-        <div className="absolute inset-0 bg-medical-pink/30 rounded-full animate-ping"></div>
-        <div className="absolute inset-0 bg-medical-pink/20 rounded-full animate-pulse"></div>
-        <div className="relative bg-gradient-medical-soft p-6 rounded-full shadow-medical-glow-strong">
-          <FaHeartbeat className="text-4xl text-white animate-heartbeat" />
+        <div className="absolute inset-0 bg-medical-primary/30 rounded-full animate-ping"></div>
+        <div className="absolute inset-0 bg-medical-primary/20 rounded-full animate-pulse"></div>
+        <div className="relative bg-white p-6 rounded-full shadow-clean border border-slate-100">
+          <FaSpinner className="text-4xl text-medical-primary animate-spin" />
         </div>
       </div>
 

@@ -24,58 +24,83 @@ const auth = (req, res, next) => {
 };
 
 // @route   POST api/analysis/detect
-// @desc    Analyze image using Ultralytics API (Proxy)
+// @desc    Analyze image using Roboflow Workflow API (Proxy)
 // @access  Private
 router.post('/detect', auth, upload.single('file'), async (req, res) => {
+    console.log('--- Analysis Request Started ---');
     if (!req.file) {
+        console.error('No file uploaded');
         return res.status(400).json({ msg: 'No image file uploaded' });
     }
 
     const filePath = req.file.path;
+    console.log('File uploaded to:', filePath);
 
     try {
-        // Prepare form data for Ultralytics
-        const formData = new FormData();
-        formData.append('file', fs.createReadStream(filePath));
-        formData.append('model', 'https://hub.ultralytics.com/models/ZuHVlqDhpz75Ec7mIiT5');
-        formData.append('imgsz', '640');
-        formData.append('conf', '0.25');
-        formData.append('iou', '0.45');
+        console.log('Processing analysis request for:', req.file.originalname);
 
-        const apiKey = process.env.ULTRALYTICS_API_KEY || process.env.VITE_ULTRALYTICS_API_KEY;
+        // Read file as buffer for base64 encoding
+        const fileBuffer = fs.readFileSync(filePath);
+        const base64Image = fileBuffer.toString('base64');
+        console.log('File converted to base64. Length:', base64Image.length);
 
-        if (!apiKey) {
-            throw new Error('Server configuration error: API key missing');
-        }
+        const ROBOFLOW_API_KEY = process.env.VITE_ROBOFLOW_API_KEY || 'R8FMaPoYSNTZ8c7cw4aa';
+        const WORKFLOW_ID = 'rit-radar'; // Updated workflow ID
+        const WORKSPACE = 'deva-yc5op';
+        const API_URL = `https://serverless.roboflow.com/${WORKSPACE}/workflows/${WORKFLOW_ID}`;
 
-        // Call Ultralytics API
-        const response = await axios.post('https://predict.ultralytics.com', formData, {
+        console.log(`Sending to Roboflow Workflow: ${API_URL}`);
+        console.log(`Using API Key: ${ROBOFLOW_API_KEY ? 'Present' : 'Missing'}`);
+
+        // Call Roboflow Workflow API
+        const response = await axios.post(API_URL, {
+            api_key: ROBOFLOW_API_KEY,
+            inputs: {
+                "image": {
+                    "type": "base64",
+                    "value": base64Image
+                }
+            }
+        }, {
             headers: {
-                ...formData.getHeaders(),
-                'x-api-key': apiKey
+                'Content-Type': 'application/json'
             }
         });
 
-        // Clean up uploaded file
-        fs.unlinkSync(filePath);
+        console.log('Roboflow Success Status:', response.status);
 
-        // Return the API response
+        // Clean up uploaded file
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+
+        console.log('Roboflow response received');
+
+        // Return the API response directly
         res.json(response.data);
 
     } catch (error) {
         // Clean up file if error occurs
         if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
+            try {
+                fs.unlinkSync(filePath);
+            } catch (e) {
+                console.error('Error deleting file:', e);
+            }
         }
 
-        console.error('AI Analysis Error:', error.message);
-        
+        console.error('AI Analysis Error Name:', error.name);
+        console.error('AI Analysis Error Message:', error.message);
+
         if (error.response) {
-            // Forward specific API errors
+            console.error('Roboflow API Response Status:', error.response.status);
+            console.error('Roboflow API Response Data:', JSON.stringify(error.response.data, null, 2));
             return res.status(error.response.status).json(error.response.data);
         }
-        
+
         res.status(500).json({ msg: 'AI Analysis failed', error: error.message });
+    } finally {
+        console.log('--- Analysis Request Ended ---');
     }
 });
 

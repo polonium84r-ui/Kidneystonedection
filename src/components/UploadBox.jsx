@@ -119,7 +119,7 @@ const UploadBox = ({ onFileSelect, selectedFile }) => {
           </div>
           <div className="text-center">
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
-              Drag & Drop Your Angiography Image
+              Drag & Drop Your CT Scan
             </h3>
             <p className="text-gray-600 mb-4">or click to browse</p>
             <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">

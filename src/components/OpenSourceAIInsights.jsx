@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react'
 import { FaRobot, FaBrain, FaStethoscope, FaExclamationTriangle, FaCheckCircle, FaSpinner, FaInfoCircle } from 'react-icons/fa'
 import { generateAIInsights } from '../services/openSourceAI'
 
-const OpenSourceAIInsights = ({ 
-  analysisData, 
+const OpenSourceAIInsights = ({
+  analysisData,
   onInsightsGenerated,
-  className = '' 
+  className = ''
 }) => {
   const [insights, setInsights] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -21,11 +21,11 @@ const OpenSourceAIInsights = ({
   const handleGenerateInsights = async () => {
     setIsLoading(true)
     setError(null)
-    
+
     try {
       const aiInsights = await generateAIInsights(analysisData)
       setInsights(aiInsights)
-      
+
       // Notify parent component
       if (onInsightsGenerated) {
         onInsightsGenerated(aiInsights)
@@ -45,7 +45,7 @@ const OpenSourceAIInsights = ({
   }, [])
 
   return (
-    <div 
+    <div
       className={`
         relative overflow-hidden
         backdrop-blur-xl bg-white/80
@@ -74,7 +74,7 @@ const OpenSourceAIInsights = ({
               </p>
             </div>
           </div>
-          
+
           {!insights && !isLoading && (
             <button
               onClick={handleGenerateInsights}
@@ -220,7 +220,7 @@ const OpenSourceAIInsights = ({
               Get Enhanced AI Insights
             </h3>
             <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              Our open source AI will analyze your angiography results and provide comprehensive medical interpretation, clinical significance, and personalized recommendations.
+              Our open source AI will analyze your scan results and provide comprehensive medical interpretation, clinical significance, and personalized recommendations.
             </p>
             <button
               onClick={handleGenerateInsights}

@@ -28,7 +28,7 @@ export const generateAIInsights = async (analysisData) => {
   try {
     // Prepare prompt for AI
     const prompt = createMedicalPrompt(analysisData)
-    
+
     // Try Hugging Face API first
     if (HUGGINGFACE_API_KEY) {
       return await callHuggingFaceAPI(prompt)
@@ -55,19 +55,19 @@ const createMedicalPrompt = (analysisData) => {
     confidence = 0,
   } = analysisData.analysis || analysisData
 
-  return `As a medical AI assistant, analyze this heart angiography report:
+  return `As a medical AI assistant, analyze this kidney stone detection report from a CT scan:
 
 Key Findings:
-- Clot Probability: ${(clotProbability * 100).toFixed(1)}%
-- Blockage Location: ${blockageLocation}
-- Narrowing Percentage: ${narrowingPercentage.toFixed(1)}%
+- Stone Probability: ${(clotProbability * 100).toFixed(1)}%
+- Stone Location: ${blockageLocation}
+- Stone Size Estimate: ${narrowingPercentage.toFixed(1)}mm
 - Severity Level: ${severity.toUpperCase()}
 - Confidence Score: ${(confidence * 100).toFixed(1)}%
 
 Please provide:
 1. A concise medical interpretation of these findings
 2. Clinical significance assessment
-3. Recommended next steps for the patient
+3. Recommended next steps for the patient (urology consult, fluids, etc.)
 4. Potential risk factors to consider
 
 Keep the response professional, concise, and medically appropriate.`
@@ -102,7 +102,7 @@ const callHuggingFaceAPI = async (prompt) => {
     }
 
     const data = await response.json()
-    
+
     // Parse response (format varies by model)
     let aiText = ''
     if (Array.isArray(data) && data[0]?.generated_text) {
@@ -128,16 +128,16 @@ const callHuggingFaceAPI = async (prompt) => {
 const parseAIResponse = (aiText) => {
   // Simple parsing - can be enhanced based on actual model output
   const lines = aiText.split('\n').filter(line => line.trim())
-  
+
   return {
-    interpretation: extractSection(lines, ['interpretation', 'finding', 'analysis']) || 
-                   lines.slice(0, 2).join(' '),
+    interpretation: extractSection(lines, ['interpretation', 'finding', 'analysis']) ||
+      lines.slice(0, 2).join(' '),
     clinicalSignificance: extractSection(lines, ['significance', 'clinical', 'importance']) ||
-                         lines.slice(2, 4).join(' '),
+      lines.slice(2, 4).join(' '),
     recommendations: extractSection(lines, ['recommend', 'next step', 'action']) ||
-                    lines.slice(4, 6).join(' '),
+      lines.slice(4, 6).join(' '),
     riskFactors: extractSection(lines, ['risk', 'factor', 'consider']) ||
-                lines.slice(6, 8).join(' '),
+      lines.slice(6, 8).join(' '),
     rawResponse: aiText,
     source: 'Hugging Face (Open Source)',
   }
@@ -147,8 +147,8 @@ const parseAIResponse = (aiText) => {
  * Extract section from AI response
  */
 const extractSection = (lines, keywords) => {
-  const relevantLines = lines.filter(line => 
-    keywords.some(keyword => 
+  const relevantLines = lines.filter(line =>
+    keywords.some(keyword =>
       line.toLowerCase().includes(keyword)
     )
   )
@@ -173,30 +173,30 @@ const generateMockInsights = async (analysisData) => {
   // Generate contextual insights based on severity
   let interpretation, significance, recommendations, riskFactors
 
-  if (severity === 'high' || narrowingPercentage >= 60) {
-    interpretation = `The angiography reveals significant arterial narrowing (${narrowingPercentage.toFixed(1)}%) in the ${blockageLocation}, indicating substantial coronary artery disease. The high clot probability (${(clotProbability * 100).toFixed(1)}%) suggests active thrombotic processes that require immediate attention.`
-    
-    significance = `This represents a high-risk cardiovascular condition that may lead to acute coronary events if left untreated. The blockage significantly compromises blood flow to cardiac muscle tissue.`
-    
-    recommendations = `Urgent cardiology consultation within 24-48 hours is recommended. Consider immediate stress testing, additional imaging (CT angiography), and evaluation for interventional procedures such as angioplasty or stenting. Review all cardiac risk factors and medication compliance.`
-    
-    riskFactors = `Key risk factors include: advanced age, family history of CAD, smoking history, hypertension, dyslipidemia, diabetes mellitus, and sedentary lifestyle. Immediate lifestyle modifications and optimal medical therapy are crucial.`
-  } else if (severity === 'medium' || narrowingPercentage >= 30) {
-    interpretation = `Moderate arterial narrowing (${narrowingPercentage.toFixed(1)}%) detected in the ${blockageLocation} suggests developing coronary artery disease. The clot probability of ${(clotProbability * 100).toFixed(1)}% indicates some thrombotic risk that warrants monitoring.`
-    
-    significance = `This finding represents an intermediate risk for cardiovascular events. While not immediately critical, it indicates progressive disease that requires proactive management and monitoring.`
-    
-    recommendations = `Schedule cardiology follow-up within 2-4 weeks. Consider additional diagnostic testing including echocardiogram, stress testing, and lipid panel. Implement aggressive cardiovascular risk factor modification including diet, exercise, and medication optimization.`
-    
-    riskFactors = `Monitor traditional risk factors: lipid profile, blood pressure control, glycemic status if diabetic, and smoking cessation. Consider assessment for metabolic syndrome and inflammatory markers.`
+  if (severity === 'high' || narrowingPercentage >= 10) {
+    interpretation = `The CT scan reveals a significant renal calculus (approx. ${narrowingPercentage.toFixed(1)}mm) in the ${blockageLocation}, indicating potential high-grade obstruction. The high probability (${(clotProbability * 100).toFixed(1)}%) suggests a dense stone burden requiring immediate evaluation.`
+
+    significance = `This represents a high-risk condition for hydronephrosis and potential renal damage if left untreated. Large stones in this location rarely pass spontaneously.`
+
+    recommendations = `Urgent urology consultation is recommended. Consider surgical intervention (Shock Wave Lithotripsy or Ureteroscopy). Increase fluid intake immediately unless contraindicated. Pain management and alpha-blockers may be required.`
+
+    riskFactors = `Key risk factors include: dehydration, high sodium/protein intake, family history of stones, and metabolic abnormalities (hypercalciuria, hyperuricosuria).`
+  } else if (severity === 'medium' || narrowingPercentage >= 5) {
+    interpretation = `Moderate sized calculus (${narrowingPercentage.toFixed(1)}mm) detected in the ${blockageLocation}. The probability of ${(clotProbability * 100).toFixed(1)}% confirms the presence of a stone that may cause intermittent obstruction.`
+
+    significance = `This finding suggests a symptomatic stone that may require medical expulsion therapy. Spontaneous passage is possible but not guaranteed.`
+
+    recommendations = `Schedule urology follow-up. Initiate medical expulsion therapy (Tamsulosin) and hydration protocol (>2.5L/day). Monitor for fever or intractable pain. Repeat imaging (KUB/Ultrasound) in 2-4 weeks.`
+
+    riskFactors = `Monitor hydration status and urinary pH. Dietary modification (low salt, moderate oxalate) is advisable to prevent growth.`
   } else {
-    interpretation = `Minimal arterial narrowing (${narrowingPercentage.toFixed(1)}%) observed in the ${blockageLocation} indicates relatively preserved coronary anatomy. The low clot probability (${(clotProbability * 100).toFixed(1)}%) is reassuring for short-term cardiovascular risk.`
-    
-    significance = `These findings suggest low immediate cardiovascular risk. However, continued monitoring is important as early-stage disease can progress.`
-    
-    recommendations = `Continue routine cardiovascular monitoring with annual follow-up. Maintain heart-healthy lifestyle including regular exercise, Mediterranean diet, and optimal control of all modifiable risk factors. Consider preventive cardiology assessment.`
-    
-    riskFactors = `Focus on primary prevention: maintain healthy weight, regular physical activity, balanced nutrition, blood pressure management, and avoid tobacco use. Regular monitoring of cholesterol and other biomarkers is recommended.`
+    interpretation = `Small non-obstructing calculus or microlithiasis (${narrowingPercentage.toFixed(1)}mm) observed in the ${blockageLocation}. The low probability (${(clotProbability * 100).toFixed(1)}%) suggests this may be a phlebolith or very small stone.`
+
+    significance = `These findings suggest low immediate risk. Small stones often pass spontaneously with adequate hydration.`
+
+    recommendations = `Continue conservative management with high fluid intake. Manage symptomatically. Routine follow-up if symptoms persist or worsen.`
+
+    riskFactors = `Focus on prevention: maintain high urine output (>2.5L/day), balanced diet, and regular physical activity.`
   }
 
   return {
@@ -217,7 +217,7 @@ const generateMockInsights = async (analysisData) => {
 export const generateLocalAIInsights = async (analysisData) => {
   try {
     const prompt = createMedicalPrompt(analysisData)
-    
+
     const response = await fetch('http://localhost:11434/api/generate', {
       method: 'POST',
       headers: {

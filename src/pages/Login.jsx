@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { FaEnvelope, FaLock, FaHeartbeat, FaUserShield, FaUserMd, FaKey } from 'react-icons/fa'
+import { FaEnvelope, FaLock, FaUserMd } from 'react-icons/fa'
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -43,37 +43,37 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 flex items-center justify-center px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50">
+      <div className="max-w-md w-full space-y-8 animate-fade-in">
         {/* Header */}
         <div className="text-center">
-          <div className="mx-auto h-20 w-20 bg-gradient-medical rounded-full flex items-center justify-center shadow-medical-glow mb-6">
-            <FaHeartbeat className="h-10 w-10 text-white" />
+          <div className="mx-auto h-16 w-16 bg-medical-primary/10 rounded-xl flex items-center justify-center mb-4">
+            <FaUserMd className="h-8 w-8 text-medical-primary" />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Heart Angiography System
+          <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
+            Kidney Stone Detection
           </h2>
-          <p className="text-gray-600">
-            Sign in to access medical image analysis
+          <p className="mt-2 text-sm text-slate-600">
+            Secure Access for Medical Professionals
           </p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border-2 border-medical-blue/20 p-8">
+        <div className="bg-white rounded-xl shadow-clean-lg p-8 border border-slate-100">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
-              <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl">
-                {error}
+              <div className="bg-red-50 border border-red-100 text-red-700 px-4 py-3 rounded-lg text-sm flex items-center">
+                <span className="font-medium mr-1">Error:</span> {error}
               </div>
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1">
                 Email Address or Username
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaEnvelope className="h-5 w-5 text-gray-400" />
+                  <FaEnvelope className="h-4 w-4 text-slate-400" />
                 </div>
                 <input
                   id="email"
@@ -83,19 +83,19 @@ const Login = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border-2 border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-medical-blue focus:border-medical-blue transition-colors"
-                  placeholder="Enter email or username"
+                  className="block w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-medical-primary/20 focus:border-medical-primary transition-all sm:text-sm"
+                  placeholder="Enter your credentials"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1">
                 Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaLock className="h-5 w-5 text-gray-400" />
+                  <FaLock className="h-4 w-4 text-slate-400" />
                 </div>
                 <input
                   id="password"
@@ -105,7 +105,7 @@ const Login = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border-2 border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-medical-blue focus:border-medical-blue transition-colors"
+                  className="block w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-medical-primary/20 focus:border-medical-primary transition-all sm:text-sm"
                   placeholder="Enter your password"
                 />
               </div>
@@ -114,15 +114,17 @@ const Login = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-lg font-semibold rounded-xl text-white bg-gradient-medical shadow-medical-glow hover:shadow-medical-glow-strong focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medical-blue transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-medical-primary hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medical-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
-              {isLoading ? 'Signing in...' : 'Sign In'}
+              {isLoading ? 'Authenticating...' : 'Sign In'}
             </button>
           </form>
+        </div>
 
-
-
-
+        {/* Footer info */}
+        <div className="text-center text-xs text-slate-400">
+          <p>&copy; 2024 Kidney Stone Detection System. All rights reserved.</p>
+          <p className="mt-1">Authorized access only.</p>
         </div>
       </div>
     </div>

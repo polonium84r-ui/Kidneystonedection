@@ -27,7 +27,7 @@ const TestimonialFooter = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-10">
                     <h3 className="text-xl font-bold text-gray-800">Meet The Team</h3>
-                    <p className="text-gray-500 text-sm mt-1">Minds behind the Heart Angiography System</p>
+                    <p className="text-gray-500 text-sm mt-1">Advanced Medical Imaging Analysis</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -36,9 +36,7 @@ const TestimonialFooter = () => {
                             key={index}
                             className="group relative bg-[#f8fafc] rounded-2xl p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:bg-white border border-transparent hover:border-medical-blue/20"
                         >
-                            <div className="absolute top-6 right-6 text-medical-blue/10 group-hover:text-medical-blue/20 transition-colors">
-                                <FaQuoteLeft className="text-4xl" />
-                            </div>
+
 
                             <div className="flex items-center space-x-4 mb-4">
                                 <div className="h-12 w-12 rounded-full bg-gradient-medical flex items-center justify-center text-white font-bold shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -59,7 +57,7 @@ const TestimonialFooter = () => {
 
                 <div className="text-center mt-12 pt-8 border-t border-gray-100">
                     <p className="text-xs text-gray-400">
-                        © {new Date().getFullYear()} Heart Angiography Detection System. All rights reserved.
+                        © {new Date().getFullYear()} Kidney Stone Detection System. All rights reserved.
                     </p>
                 </div>
             </div>

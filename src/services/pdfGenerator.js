@@ -134,7 +134,7 @@ export const generatePDFReport = async (analysisData, aiInsights = null, doctorS
     doc.setTextColor(255, 255, 255)
     doc.setFontSize(20)
     doc.setFont(undefined, 'bold')
-    doc.text('Heart Angiography Analysis Report', margin, 20)
+    doc.text('Kidney Stone Analysis Report', margin, 20)
 
     doc.setFontSize(10)
     doc.setFont(undefined, 'normal')
@@ -206,10 +206,15 @@ export const generatePDFReport = async (analysisData, aiInsights = null, doctorS
     const analysis = analysisData.analysis || {}
 
     // Analysis Cards Data
-    addText(`Clot Probability: ${((Number(analysis.clotProbability) || 0) * 100).toFixed(1)}%`, 11, true)
-    addText(`Blockage Location: ${analysis.blockageLocation || 'N/A'}`, 11)
-    addText(`Narrowing Percentage: ${(Number(analysis.narrowingPercentage) || 0).toFixed(1)}%`, 11)
-    addText(`Confidence Score: ${((Number(analysis.confidence) || 0) * 100).toFixed(1)}%`, 11)
+    const stoneProb = analysis.stoneProbability || analysis.clotProbability || 0
+    addText(`Stone Confidence: ${((Number(stoneProb) || 0) * 100).toFixed(1)}%`, 11, true)
+    addText(`Stone Location: ${analysis.stoneLocation || analysis.blockageLocation || 'N/A'}`, 11)
+
+    const obstructionRisk = analysis.obstructionRisk || analysis.narrowingPercentage || 0
+    addText(`Obstruction Risk Score: ${(Number(obstructionRisk) || 0).toFixed(1)}`, 11)
+
+    const confidence = analysis.confidence || 0
+    addText(`Overall Confidence: ${((Number(confidence) || 0) * 100).toFixed(1)}%`, 11)
 
     const getSeverity = (percentage) => {
       const num = Number(percentage) || 0
@@ -218,13 +223,32 @@ export const generatePDFReport = async (analysisData, aiInsights = null, doctorS
       return 'High Risk'
     }
 
-    const severity = getSeverity(analysis.narrowingPercentage)
+    const severity = getSeverity(obstructionRisk)
     addText(`Severity Level: ${severity}`, 11, true, [212, 63, 63])
     yPos += 5
 
+    // Clinical Measurements Section
+    if (analysis.clinicalMeasurements && analysis.clinicalMeasurements.length > 0) {
+      checkNewPage(40)
+      addText('CLINICAL MEASUREMENTS', 14, true, [59, 130, 246])
+      doc.setDrawColor(59, 130, 246)
+      doc.line(margin, yPos - 2, pageWidth - margin, yPos - 2)
+      yPos += 5
+
+      analysis.clinicalMeasurements.forEach((measure, index) => {
+        const title = analysis.clinicalMeasurements.length > 1 ? `Target #${index + 1} (${measure.class})` : `Detected Target (${measure.class})`;
+        addText(`${title}:`, 11, true)
+        addText(`• Size: ${measure.sizeText}`, 10)
+        addText(`• Shape: ${measure.shape}`, 10)
+        addText(`• Distance to Ureter Ref: ${measure.distanceToUreterMM} mm`, 10)
+        yPos += 3
+      })
+      yPos += 5
+    }
+
     // Images Section
     checkNewPage(60)
-    addText('ANGIOGRAPHY IMAGES', 14, true, [59, 130, 246])
+    addText('CT SCAN IMAGES', 14, true, [14, 165, 233]) // Sky 500
     doc.setDrawColor(59, 130, 246)
     doc.line(margin, yPos - 2, pageWidth - margin, yPos - 2)
     yPos += 5
@@ -268,7 +292,7 @@ export const generatePDFReport = async (analysisData, aiInsights = null, doctorS
     addText(aiExplanation, 10)
 
     // Clinical Steps
-    const clinicalSteps = getClinicalSteps(analysis.narrowingPercentage || 0)
+    const clinicalSteps = getClinicalSteps(obstructionRisk)
     addText('Recommended Clinical Steps:', 11, true)
     clinicalSteps.forEach((step, index) => {
       addText(`${index + 1}. ${step}`, 10)
@@ -337,7 +361,7 @@ export const generatePDFReport = async (analysisData, aiInsights = null, doctorS
     doc.line(margin, yPos - 2, pageWidth - margin, yPos - 2)
     yPos += 5
 
-    addText(`Detection Status: ${analysis.detectionStatus || 'Blockages detected'}`, 10)
+    addText(`Detection Status: ${analysis.detectionStatus || 'Analysis Complete'}`, 10)
     addText(`Analysis Date: ${new Date().toLocaleString()}`, 10)
 
 
@@ -348,7 +372,7 @@ export const generatePDFReport = async (analysisData, aiInsights = null, doctorS
       doc.setFontSize(8)
       doc.setTextColor(150, 150, 150)
       doc.text(
-        `Page ${i} of ${totalPages} - Heart Angiography Detection System`,
+        `Page ${i} of ${totalPages} - Kidney Stone Detection System`,
         pageWidth / 2,
         pageHeight - 10,
         { align: 'center' }
@@ -356,7 +380,7 @@ export const generatePDFReport = async (analysisData, aiInsights = null, doctorS
     }
 
     // Generate filename
-    const filename = `Angiography_Analysis_${new Date().toISOString().split('T')[0]}_${Date.now()}.pdf`
+    const filename = `KidneyStone_Analysis_${new Date().toISOString().split('T')[0]}_${Date.now()}.pdf`
 
     // Save PDF
     doc.save(filename)
@@ -372,42 +396,42 @@ export const generatePDFReport = async (analysisData, aiInsights = null, doctorS
  * Generate AI explanation text
  */
 const generateAIExplanation = (analysis) => {
-  const narrowing = analysis.narrowingPercentage || 0
-  const location = analysis.blockageLocation || 'detected vessels'
+  const riskScore = Number(analysis.obstructionRisk) || Number(analysis.narrowingPercentage) || 0
+  const location = analysis.stoneLocation || analysis.blockageLocation || 'detected region'
 
-  if (narrowing >= 60) {
-    return `Significant arterial narrowing (${narrowing.toFixed(1)}%) has been detected in the ${location}. The AI analysis indicates potential vascular obstruction that requires immediate clinical attention.`
-  } else if (narrowing >= 30) {
-    return `Moderate arterial narrowing (${narrowing.toFixed(1)}%) observed in the ${location}. While not immediately critical, this finding warrants further clinical evaluation and monitoring.`
+  if (riskScore >= 60) {
+    return `Significant renal calculus burden (Risk Score: ${riskScore.toFixed(1)}) has been detected in the ${location}. The AI analysis indicates a high probability of urinary tract obstruction or significant stone size that requires immediate clinical attention to prevent hydronephrosis.`
+  } else if (riskScore >= 30) {
+    return `Moderate renal calculus (Risk Score: ${riskScore.toFixed(1)}) observed in the ${location}. While immediate intervention may not be critical, this finding warrants urology evaluation for potential medical expulsion therapy or elective procedures.`
   } else {
-    return `Minimal narrowing (${narrowing.toFixed(1)}%) detected in the ${location}. The analysis shows relatively normal vascular patterns with minor anomalies.`
+    return `Minimal or small calculus (Risk Score: ${riskScore.toFixed(1)}) detected in the ${location}. The analysis shows findings likely manageable with conservative measures, subject to clinical correlation.`
   }
 }
 
 /**
- * Get clinical steps based on narrowing percentage
+ * Get clinical steps based on obstruction risk
  */
-const getClinicalSteps = (narrowing) => {
-  if (narrowing >= 60) {
+const getClinicalSteps = (riskScore) => {
+  if (riskScore >= 60) {
     return [
-      'Schedule urgent cardiology consultation within 24-48 hours',
-      'Consider stress testing and additional diagnostic imaging',
-      'Review patient\'s cardiac risk factors and medical history',
-      'Discuss potential interventional procedures if indicated'
+      'Urgent Urology Consultation (within 24-48 hours)',
+      'Non-Contrast CT (NCCT) KUB to confirm stone size/position',
+      'Assess for signs of infection or obstruction (hydronephrosis)',
+      'Evaluate for intervention (Ureteroscopy/ESWL/PCNL)'
     ]
-  } else if (narrowing >= 30) {
+  } else if (riskScore >= 30) {
     return [
-      'Schedule follow-up cardiology appointment within 2-4 weeks',
-      'Perform additional imaging studies (Echocardiogram, CT angiography)',
-      'Assess cardiovascular risk factors and lifestyle modifications',
-      'Consider lipid panel and cardiac biomarkers'
+      'Schedule Urology Outpatient appointment',
+      'Diagnostic Ultrasound or KUB X-ray for baseline',
+      'Prescribe hydration and analgesia as indicated',
+      'Review metabolic profile and dietary history'
     ]
   } else {
     return [
-      'Continue routine cardiovascular monitoring',
-      'Maintain regular follow-up appointments as scheduled',
-      'Encourage heart-healthy lifestyle modifications',
-      'Monitor any new or changing symptoms'
+      'Increase oral fluid intake (>2.5L daily)',
+      'Routine surveillance per clinical guidelines',
+      'Dietary modification (low salt, moderate protein)',
+      'Monitor for flank pain or hematuria'
     ]
   }
 }

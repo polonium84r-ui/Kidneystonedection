@@ -110,22 +110,25 @@ const Upload = () => {
   }
 
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-[calc(100vh-64px)] py-12 px-4 sm:px-6 lg:px-8 bg-slate-50">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">
-            Upload Angiography Image
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-medical-primary/10 text-medical-primary mb-4">
+            <FaFlask className="text-xl" />
+          </div>
+          <h1 className="text-3xl font-bold text-slate-800 mb-3">
+            Kidney CT Scan Analysis
           </h1>
-          <p className="text-gray-600 text-lg">
-            Select or drag and drop your angiography or blood vessel image to begin analysis
+          <p className="text-slate-600 text-lg max-w-2xl mx-auto">
+            Upload a clear CT scan image to detect presence, size, and location of renal calculi.
           </p>
         </div>
 
         {/* Upload Box */}
         <div className="mb-8">
           {isDicom && selectedFile ? (
-            <div className="max-w-4xl mx-auto bg-black rounded-2xl overflow-hidden shadow-xl aspect-video relative">
+            <div className="max-w-4xl mx-auto bg-black rounded-xl overflow-hidden shadow-clean-lg aspect-video relative border border-slate-800">
               <DicomViewer
                 file={selectedFile}
                 onImageRendered={(dataUrl) => setDicomDataUrl(dataUrl)}
@@ -135,7 +138,7 @@ const Upload = () => {
                   setSelectedFile(null)
                   setDicomDataUrl(null)
                 }}
-                className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm hover:bg-red-700 transition"
+                className="absolute top-4 right-4 bg-slate-800/80 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm hover:bg-slate-700 transition border border-slate-700 font-medium"
               >
                 Change File
               </button>
@@ -147,7 +150,7 @@ const Upload = () => {
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 bg-red-50 border-2 border-red-200 text-red-700 px-6 py-4 rounded-xl">
+          <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl shadow-sm">
             <div className="flex items-start space-x-3">
               <div className="flex-shrink-0 mt-1">
                 <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
@@ -155,8 +158,8 @@ const Upload = () => {
                 </svg>
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-red-800 mb-2">Analysis Failed</h3>
-                <div className="text-sm whitespace-pre-line">{error}</div>
+                <h3 className="font-semibold text-red-800 mb-1">Analysis Interrupted</h3>
+                <div className="text-sm whitespace-pre-line text-red-700">{error}</div>
               </div>
             </div>
           </div>
@@ -164,41 +167,41 @@ const Upload = () => {
 
         {/* Analyze Button */}
         {selectedFile && !isAnalyzing && (
-          <div className="flex justify-center">
+          <div className="flex justify-center animate-fade-in">
             <button
               onClick={handleAnalyze}
-              className="group relative overflow-hidden bg-gradient-medical text-white px-12 py-4 rounded-xl font-semibold text-lg shadow-medical-glow-strong hover:shadow-2xl transition-all duration-300 hover:scale-105"
+              className="group relative overflow-hidden bg-medical-primary text-white px-10 py-3.5 rounded-lg font-semibold text-base shadow-clean hover:bg-sky-700 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
             >
-              <span className="relative z-10 flex items-center space-x-3">
-                <FaFlask />
-                <span>Start AI Analysis</span>
+              <span className="relative z-10 flex items-center space-x-2">
+                <FaFlask className="text-sm" />
+                <span>Begin Analysis</span>
               </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-medical-pink to-medical-purple opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </button>
           </div>
         )}
 
         {/* Loading State */}
         {isAnalyzing && (
-          <div className="bg-white rounded-2xl shadow-xl border-2 border-medical-blue/20 p-8">
-            <LoaderAnimation message="Processing your angiography image with AI..." />
+          <div className="bg-white rounded-xl shadow-clean border border-slate-100 p-8 max-w-2xl mx-auto">
+            <LoaderAnimation message="Processing CT Scan for anomalies..." />
+            <p className="text-center text-xs text-slate-400 mt-4">This may take a few seconds depending on image resolution</p>
           </div>
         )}
 
         {/* Info Section */}
         {!isAnalyzing && (
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white/80 rounded-xl p-6 border-2 border-medical-blue/20 shadow-md">
-              <h3 className="font-semibold text-gray-800 mb-2">Supported Formats</h3>
-              <p className="text-sm text-gray-600">JPG, PNG, DICOM, and other common medical image formats</p>
+          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+              <h3 className="font-bold text-slate-800 mb-2 text-sm uppercase tracking-wide">Supported Formats</h3>
+              <p className="text-sm text-slate-500">DICOM (.dcm), JPEG, PNG. High resolution scans recommended.</p>
             </div>
-            <div className="bg-white/80 rounded-xl p-6 border-2 border-medical-cyan/20 shadow-md">
-              <h3 className="font-semibold text-gray-800 mb-2">AI Processing</h3>
-              <p className="text-sm text-gray-600">Advanced deep learning models for accurate detection</p>
+            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+              <h3 className="font-bold text-slate-800 mb-2 text-sm uppercase tracking-wide">AI Processing</h3>
+              <p className="text-sm text-slate-500">Utilizes YOLOv11n models fine-tuned on renal calculus datasets.</p>
             </div>
-            <div className="bg-white/80 rounded-xl p-6 border-2 border-medical-purple/20 shadow-md">
-              <h3 className="font-semibold text-gray-800 mb-2">Privacy & Security</h3>
-              <p className="text-sm text-gray-600">Your images are processed securely and not stored permanently</p>
+            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+              <h3 className="font-bold text-slate-800 mb-2 text-sm uppercase tracking-wide">HIPAA Compliance</h3>
+              <p className="text-sm text-slate-500">Images are processed in memory and cleared after session end.</p>
             </div>
           </div>
         )}

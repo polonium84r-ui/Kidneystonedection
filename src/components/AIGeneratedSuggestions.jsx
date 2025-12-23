@@ -11,12 +11,12 @@ import { FaBrain, FaExclamationTriangle, FaChartLine, FaStethoscope, FaArrowRigh
  *  className?: string
  * }} props
  */
-const AIGeneratedSuggestions = ({ 
-  analysis = {}, 
+const AIGeneratedSuggestions = ({
+  analysis = {},
   suggestions = [],
   severity = 'medium',
   confidence = 0.92,
-  className = '' 
+  className = ''
 }) => {
   const [isVisible, setIsVisible] = useState(false)
 
@@ -61,42 +61,43 @@ const AIGeneratedSuggestions = ({
 
   // Generate AI explanation based on analysis
   const generateAIExplanation = () => {
-    const narrowing = Number(analysis.narrowingPercentage) || 0
-    const location = analysis.blockageLocation || 'detected vessels'
-    
-    if (narrowing >= 60) {
-      return `Significant arterial narrowing (${narrowing.toFixed(1)}%) has been detected in the ${location}. The AI analysis indicates potential vascular obstruction that requires immediate clinical attention. The detected anomaly suggests possible coronary artery disease progression.`
-    } else if (narrowing >= 30) {
-      return `Moderate arterial narrowing (${narrowing.toFixed(1)}%) observed in the ${location}. While not immediately critical, this finding warrants further clinical evaluation and monitoring. The AI model suggests potential early-stage vascular changes.`
+    // Use obstructionRisk or fallback to narrowingPercentage for compatibility
+    const riskScore = Number(analysis.obstructionRisk) || Number(analysis.narrowingPercentage) || 0
+    const location = analysis.stoneLocation || analysis.blockageLocation || 'detected region'
+
+    if (riskScore >= 60) {
+      return `Significant renal calculus burden (Risk Score: ${riskScore.toFixed(1)}) has been detected in the ${location}. The AI analysis indicates a high probability of urinary tract obstruction or significant stone size that requires immediate clinical attention to prevent hydronephrosis.`
+    } else if (riskScore >= 30) {
+      return `Moderate renal calculus (Risk Score: ${riskScore.toFixed(1)}) observed in the ${location}. While immediate intervention may not be critical, this finding warrants urology evaluation for potential medical expulsion therapy or elective procedures.`
     } else {
-      return `Minimal narrowing (${narrowing.toFixed(1)}%) detected in the ${location}. The analysis shows relatively normal vascular patterns with minor anomalies that fall within acceptable clinical parameters. Continued monitoring recommended.`
+      return `Minimal or small calculus (Risk Score: ${riskScore.toFixed(1)}) detected in the ${location}. The analysis shows findings likely manageable with conservative measures, subject to clinical correlation.`
     }
   }
 
   // Recommended clinical steps
   const getClinicalSteps = () => {
-    const narrowing = Number(analysis.narrowingPercentage) || 0
-    
-    if (narrowing >= 60) {
+    const riskScore = Number(analysis.obstructionRisk) || Number(analysis.narrowingPercentage) || 0
+
+    if (riskScore >= 60) {
       return [
-        'Schedule urgent cardiology consultation within 24-48 hours',
-        'Consider stress testing and additional diagnostic imaging',
-        'Review patient\'s cardiac risk factors and medical history',
-        'Discuss potential interventional procedures if indicated'
+        'Urgent Urology Consultation (within 24-48 hours)',
+        'Non-Contrast CT (NCCT) KUB to confirm stone size/position',
+        'Assess for signs of infection or obstruction (hydronephrosis)',
+        'Evaluate for intervention (Ureteroscopy/ESWL/PCNL)'
       ]
-    } else if (narrowing >= 30) {
+    } else if (riskScore >= 30) {
       return [
-        'Schedule follow-up cardiology appointment within 2-4 weeks',
-        'Perform additional imaging studies (Echocardiogram, CT angiography)',
-        'Assess cardiovascular risk factors and lifestyle modifications',
-        'Consider lipid panel and cardiac biomarkers'
+        'Schedule Urology Outpatient appointment',
+        'Diagnostic Ultrasound or KUB X-ray for baseline',
+        'Prescribe hydration and analgesia as indicated',
+        'Review metabolic profile and dietary history'
       ]
     } else {
       return [
-        'Continue routine cardiovascular monitoring',
-        'Maintain regular follow-up appointments as scheduled',
-        'Encourage heart-healthy lifestyle modifications',
-        'Monitor any new or changing symptoms'
+        'Increase oral fluid intake (>2.5L daily)',
+        'Routine surveillance per clinical guidelines',
+        'Dietary modification (low salt, moderate protein)',
+        'Monitor for flank pain or hematuria'
       ]
     }
   }
@@ -104,7 +105,7 @@ const AIGeneratedSuggestions = ({
   const clinicalSteps = getClinicalSteps()
 
   return (
-    <div 
+    <div
       className={`
         relative overflow-hidden
         backdrop-blur-xl bg-white/70
@@ -178,7 +179,7 @@ const AIGeneratedSuggestions = ({
               {((confidence || 0) * 100).toFixed(1)}%
             </p>
             <div className="mt-3 w-full bg-gray-200/50 rounded-full h-2.5 overflow-hidden">
-              <div 
+              <div
                 className="bg-gradient-to-r from-medical-purple to-medical-pink h-full rounded-full transition-all duration-1000"
                 style={{ width: `${(confidence || 0) * 100}%` }}
               ></div>
@@ -194,7 +195,7 @@ const AIGeneratedSuggestions = ({
           </div>
           <ul className="space-y-3">
             {clinicalSteps.map((step, index) => (
-              <li 
+              <li
                 key={index}
                 className="flex items-start space-x-3 group"
               >
