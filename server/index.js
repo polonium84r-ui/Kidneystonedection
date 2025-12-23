@@ -25,18 +25,17 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/heart_angio
     .then(() => console.log('✅ MongoDB Connected'))
     .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
-// Basic Route
-app.get('/', (req, res) => {
-    res.send('Heart Angiography API is running');
-});
-
 import authRoutes from './routes/auth.js';
 import analysisRoutes from './routes/analysis.js';
 
-// Routes
-// Routes
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/analysis', analysisRoutes);
+
+// Basic health check route (only for non-production or API testing)
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', message: 'Heart Angiography API is running' });
+});
 
 // Serve Static Assets in Production
 if (process.env.NODE_ENV === 'production') {
